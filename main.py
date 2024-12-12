@@ -1,8 +1,13 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
+from aiogram import Bot, Dispatcher
 from dotenv import dotenv_values
-from random import choice
+
+from handlers.random import random_router
+from handlers.start import start_router
+from handlers.picture import picture_router
+from handlers.my_info import myinfo_router
+from handlers.other_messages import echo_router
+
 
 
 token = dotenv_values(".env")["BOT_TOKEN"]
@@ -10,39 +15,14 @@ bot = Bot(token=token)
 dp = Dispatcher()
 
 
-@dp.message(Command("start"))
-async def start_handler(message):
-    name = message.from_user.first_name
-    await message.answer(f'Здравствуйте, {name}!')
-
-
-
-@dp.message(Command("myinfo"))
-async def myinfo_handler(message: types.Message):
-    identificator = message.from_user.id
-    await message.answer(f'Ваш ID: {identificator}')
-    name = message.from_user.first_name
-    await message.answer(f'Ваше имя: {name}')
-    user = message.from_user.username
-    await message.answer(f'Ваш никнейм: {user}')
-
-
-@dp.message(Command("random"))
-async def random_handler(message: types.Message):
-    names = ['Billie Eilish', 'Justin Timberlake', 'Zivert', 'Kanye West', 'Rihanna']
-    await message.answer(choice(names))
-
-
-
-@dp.message()
-async def echo_handler(message: types.Message):
-    txt = message.text
-    await message.answer(txt)
-
-
 
 
 async def main():
+    dp.include_router(start_router)
+    dp.include_router(picture_router)
+    dp.include_router(myinfo_router)
+    dp.include_router(random_router)
+    dp.include_router(echo_router)
     # запуск бота
     await dp.start_polling(bot)
 
