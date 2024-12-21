@@ -28,7 +28,7 @@ async def process_name(message: types.Message, state: FSMContext):
 
 @review_router.message(RestaurantReview.instagram_username)
 async def process_inst(message: types.Message, state: FSMContext):
-    await state.update_data(instagram_username = message.text)
+    await state.update_data(instagram_username=message.text)
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[
             [types.InlineKeyboardButton(text="плохо",callback_data='плохо')],
@@ -64,15 +64,19 @@ async def process_foodrating(callback: types.CallbackQuery, state: FSMContext):
             ]
         ]
     )
-    await callback.message.answer("Ваша оценка по чистоте заведения от 1 до 5?", reply_markup = kb)
-    await state.set_state(RestaurantReview.cleanliness_rating)
+    if callback.data in ("плохо", "удовлетворительно", "хорошо", "отлично"):
+
+        await callback.message.answer("Ваша оценка по чистоте заведения от 1 до 5?", reply_markup = kb)
+        await state.set_state(RestaurantReview.cleanliness_rating)
 
 @review_router.message(RestaurantReview.cleanliness_rating)
 async def process_cleanliness(message: types.Message, state: FSMContext):
     await state.update_data(cleanliness_rating = message.text)
     kb = types.ReplyKeyboardRemove()
-    await message.answer("Ваши комментарии или жалобы", reply_markup = kb)
-    await state.set_state(RestaurantReview.extra_comments)
+    if message.text in ("плохо", "удовлетворительно", "хорошо", "отлично"):
+
+        await message.answer("Ваши комментарии или жалобы", reply_markup = kb)
+        await state.set_state(RestaurantReview.extra_comments)
 
 @review_router.message(RestaurantReview.extra_comments)
 async def process_comments(message: types.Message, state: FSMContext):
