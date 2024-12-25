@@ -18,3 +18,12 @@ class Database:
                 )
             """)
             conn.commit()
+
+    def save_survey(self, data: dict):
+        with sqlite3.connect(self.path) as conn:
+            conn.execute('''INSERT INTO reviews (name, instagram_username, food_rating, cleanliness_rating, extra_comments)
+            VALUES (?, ?, ?, ?, ?)''',
+            (data['name'], data['instagram_username'],
+             data['food_rating'], data['cleanliness_rating'], data['extra_comments'])
+            )
+            conn.commit()

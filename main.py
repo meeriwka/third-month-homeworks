@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from bot_config import dp, bot, database
+from bot_config import dp, bot, db
 from handlers.random import random_router
 from handlers.start import start_router
 from handlers.picture import picture_router
@@ -10,7 +10,7 @@ from handlers.other_messages import echo_router
 from handlers.review_dialogue import review_router
 
 async def on_startup(bot):
-    database.create_tables()
+    db.create_tables()
 
 async def main():
     #регистрация роутеров

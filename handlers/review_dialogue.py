@@ -2,7 +2,7 @@
 from aiogram import Router, F, types
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
-
+from bot_config import db
 
 review_router = Router()
 
@@ -33,13 +33,13 @@ async def process_inst(message: types.Message, state: FSMContext):
         inline_keyboard=[
             [types.InlineKeyboardButton(text="плохо",callback_data='плохо')],
             [
-                types.InlineKeyboardButton(text="удовлетворительно",callback_data='удов')
+                types.InlineKeyboardButton(text="удовлетворительно",callback_data='удовлетворительно')
             ],
             [
                 types.InlineKeyboardButton(text="хорошо",callback_data='хорошо')
             ],
             [
-                types.InlineKeyboardButton(text="отлично", callback_data='отл')
+                types.InlineKeyboardButton(text="отлично", callback_data='отлично')
             ]
         ]
     )
@@ -81,7 +81,8 @@ async def process_cleanliness(message: types.Message, state: FSMContext):
 @review_router.message(RestaurantReview.extra_comments)
 async def process_comments(message: types.Message, state: FSMContext):
     await state.update_data(extra_comments = message.text)
-    basa = await state.get_data()
-    print(basa)
+    data = await state.get_data()
+    print(data)
+    db.save_survey(data)
     await state.clear()
     await message.answer('Thank u')
